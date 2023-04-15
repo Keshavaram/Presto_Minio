@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: presto
+  namespace: presto
+  labels:
+    app: presto
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: presto
+      labels:
+        app: presto
+    spec:
+      volumes:
+        - name: data
+          emptyDir:
+            sizeLimit: 500Mi
+      containers:
+        - name: presto
+          image: keshavaram/presto_image:1.1
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: presto
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: presto
+  namespace: presto
+spec:
+  selector:
+    app: presto
+  ports:
+    - port: 8080
+      name: console
+  type: NodePort

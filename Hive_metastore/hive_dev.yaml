@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hive-metastore
+  namespace: hive-metastore
+  labels:
+    app: hive-metastore
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: hive-metastore
+      labels:
+        app: hive-metastore
+    spec:
+      volumes:
+        - name: data
+          emptyDir:
+            sizeLimit: 500Mi
+      containers:
+        - name: hive-metastore
+          image: keshavaram/presto_alpine:1.0
+      imagePullSecrets:
+        - name: regcred
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: hive-metastore
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hive-metastore
+  namespace: hive-metastore
+spec:
+  selector:
+    app: hive-metastore
+  ports:
+    - port: 9083
+      name: metastore
+  type: NodePort
