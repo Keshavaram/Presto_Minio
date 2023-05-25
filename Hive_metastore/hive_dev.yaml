@@ -1,3 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-pvc-hive
+  namespace: hive-metastore
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ""
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,12 +27,15 @@ spec:
         app: hive-metastore
     spec:
       volumes:
-        - name: data
-          emptyDir:
-            sizeLimit: 500Mi
+        - name: hive
+          persistentVolumeClaim:
+            claimName: local-pvc-hive
       containers:
         - name: hive-metastore
-          image: keshavaram/presto_alpine:1.0
+          image: keshavaram/hive_metastore:1.2
+          volumeMounts:
+            - mountPath: /data/hive
+              name: hive
       imagePullSecrets:
         - name: regcred
       restartPolicy: Always

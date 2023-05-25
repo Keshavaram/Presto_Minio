@@ -21,11 +21,6 @@ spec:
         - name: minio
           image: quay.io/minio/minio:latest
           imagePullPolicy: IfNotPresent
-#          env:
-#            - name: MINIO_ROOT_USER
-#              value: "keshavaram"
-#            - name: MINIO_ROOT_PASSWORD
-#              value: "minkesh2003"
           livenessProbe:
             httpGet:
               path: /minio/health/live
@@ -38,14 +33,6 @@ spec:
               port: 9000
             initialDelaySeconds: 120
             periodSeconds: 20
-          resources:
-            requests:
-              memory: "1000Mi"
-              cpu: "1000m"
-            limits:
-              memory: "1500Mi"
-              cpu: "1500m"
-
           volumeMounts:
             - mountPath: /data
               name: data
