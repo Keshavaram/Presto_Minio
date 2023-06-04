@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-pvc-superset
+  namespace: superset
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ""
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: superset
+  namespace: superset
+  labels:
+    app: superset
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: superset
+      labels:
+        app: superset
+    spec:
+      volumes:
+        - name: superset
+          persistentVolumeClaim:
+            claimName: local-pvc-superset
+      containers:
+        - name: superset
+          image: keshavaram/superset:1.1
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /data/superset
+              name: superset
+  selector:
+    matchLabels:
+      app: superset
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: superset-svc
+  namespace: superset
+spec:
+  selector:
+    app: superset
+  ports:
+    - port: 8088
+      name: console
+  type: NodePort
