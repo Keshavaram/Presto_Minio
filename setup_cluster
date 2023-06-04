@@ -1,0 +1,10 @@
+docker context use default >> /dev/null;
+echo "Launching Minio-client, Hive-metastore, Presto UI and Superset UI..."
+kubectl get pods -n minio-dev
+minikube service list -n minio-dev
+kubectl get pods -n hive-metastore
+minikube service list -n hive-metastore
+kubectl get pods -n presto
+minikube service list -n presto
+kubectl get pods -n superset
+minikube service list -n superset
